@@ -38,17 +38,38 @@ public class SpellGlyph : MonoBehaviour
 
 		_wandPos = Vector3.Lerp(_wandPos, _magicWand.transform.position, Time.deltaTime * LerpSpeed);
 		_wandForward = Vector3.Lerp(_wandForward, _magicWand.transform.forward, Time.deltaTime * LerpSpeed);
-		
-		var planePos = Vector3.ProjectOnPlane(
-			_wandPos + _wandForward * _magicWand.ProjectionDistance,
-			GlyphCanvas.transform.forward
-		);
-		var dist = planePos.magnitude;
-		var clampedPlanePos = planePos.normalized * 
-		                      GlyphCanvas.ProjectionScale * 
-		                      Mathf.Clamp(dist, 0f, GlyphCanvas.MaxProjectedDistance);
 
-		clampedPlanePos += GlyphCanvas.transform.position;
+		var wandDrawPos = _wandPos + _wandForward * _magicWand.ProjectionDistance;
+		var localWandPos = wandDrawPos - GlyphCanvas.transform.position;
+
+		var planePos = Vector3.ProjectOnPlane(localWandPos, GlyphCanvas.transform.forward);
+		planePos *= GlyphCanvas.ProjectionScale;
+		if (planePos.magnitude > GlyphCanvas.MaxProjectedDistance) {
+			var length = planePos.magnitude;
+			planePos = planePos.normalized * Mathf.Clamp(length, 0f, GlyphCanvas.MaxProjectedDistance);
+		}
+
+		var clampedPlanePos = planePos + GlyphCanvas.transform.position;
+		
+//		var localWandPos = GlyphCanvas.transform.InverseTransformPoint(_wandPos);
+//		localWandPos.Scale(new Vector3(-1f / GlyphCanvas.transform.localScale.x, 1f / GlyphCanvas.transform.localScale.y, 0f));
+//		localWandPos *= 10f;
+//		//localWandPos.z = 0f;
+//
+//		var clampedPlanePos = GlyphCanvas.transform.TransformPoint(localWandPos); 
+//		
+//		//var clampedLocalWandPos = localWandPos.normalized * GlyphCanvas.ProjectionScale
+//		
+//		var planePos = Vector3.ProjectOnPlane(
+//			(_wandPos + _wandForward * _magicWand.ProjectionDistance) - _wandPos,
+//			GlyphCanvas.transform.forward
+//		);
+//		var dist = (planePos - GlyphCanvas.transform.position).magnitude;
+//		var clampedPlanePos = planePos.normalized * 
+//		                      GlyphCanvas.ProjectionScale * 
+//		                      Mathf.Clamp(dist, 0f, GlyphCanvas.MaxProjectedDistance);
+//
+//		clampedPlanePos += GlyphCanvas.transform.position;
 		_linePoints.Add(clampedPlanePos);
 
 		_lineRenderer.positionCount = _linePoints.Count;
