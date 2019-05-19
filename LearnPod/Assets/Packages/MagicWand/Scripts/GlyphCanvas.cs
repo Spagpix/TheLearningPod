@@ -17,6 +17,12 @@ public class GlyphCanvas : MonoBehaviour
 
 	public void Update()
 	{
+		if (MagicWand == null) {
+			MagicWand = FindObjectOfType<MagicWand>();
+			if (MagicWand == null) {
+				Debug.LogError("Error! No Magic Wand found in scene (GlyphCanvas needs one)!");
+			}
+		}
 		transform.LookAt(MagicWand.transform.position, Vector3.up);
 	}
 }
