@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SpellTarget : MonoBehaviour
 {
@@ -18,7 +19,10 @@ public class SpellTarget : MonoBehaviour
     public bool IsTippable;
 
 	private Rigidbody _rigidbody;
-	
+
+    public UnityEvent OnActivate;
+    public UnityEvent OnDeactivate;
+
 	public void Activate(MagicWand magicWand)
 	{
 		MagicWand = magicWand;
@@ -26,12 +30,14 @@ public class SpellTarget : MonoBehaviour
 
 		MagicWand.ObjectTargetDistance = (MagicWand.transform.position - transform.position).magnitude;
 
-		Activated = true;
+        Activated = true;
+        OnActivate.Invoke();
 	}
 
 	public void Deactivate()
 	{
 		Activated = false;
+        OnDeactivate.Invoke();
 	}
 
 	public void FixedUpdate()
