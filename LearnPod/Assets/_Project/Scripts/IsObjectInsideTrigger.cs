@@ -10,10 +10,14 @@ public class IsObjectInsideTrigger : MonoBehaviour
     public UnityEvent OnEnter;
     public UnityEvent OnExit;
 
+    public bool ClampToGround = false;
+
     private bool _inside;
 
     public void Update()
     {
+        var pos = Target.position;
+        if (ClampToGround) pos.y = 0f;
         if (Trigger.bounds.Contains(Target.position)) {
             if (!_inside) {
                 OnEnter.Invoke();
